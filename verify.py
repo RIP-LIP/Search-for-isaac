@@ -12,7 +12,7 @@ from pathlib import Path
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(__file__).resolve().parent / "out"
+OUT = Path(__file__).resolve().parent / "docs"
 DATA = OUT / "data.json"
 
 # 人工核对的基准样本：(code, 官方中文名, 官方英文名)

@@ -56,7 +56,7 @@
 cd console-site
 pip install pypinyin
 
-python build.py          # 生成 out/
+python build.py          # 生成 docs/
 python verify.py         # 53 项校验
 python serve.py          # http://127.0.0.1:8765/
 ```
@@ -74,11 +74,11 @@ python serve.py          # http://127.0.0.1:8765/
 ## 目录
 
 ```
-build.py     抽数据、生成 out/
-verify.py    校验 out/data.json
+build.py     抽数据、生成 docs/
+verify.py    校验 docs/data.json
 serve.py     本地预览服务器
 site/        页面模板：index.html / style.css / app.js
-out/         构建产物，部署的就是它
+docs/        构建产物，部署的就是它，也是 GitHub Pages 的发布目录
 ```
 
 ## 版权

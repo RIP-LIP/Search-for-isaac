@@ -14,7 +14,7 @@
 《控制台》与 Project:译名表/实体 两页。
 
 用法：
-    python build.py            # 生成 out/ 站点
+    python build.py            # 生成 docs/ 站点
     python build.py --report   # 只打印数据体检报告
 """
 
@@ -38,7 +38,9 @@ if hasattr(sys.stdout, "reconfigure"):
 GAME_ROOT = Path(r"D:\SteamLibrary\steamapps\common\The Binding of Isaac Rebirth")
 RES = GAME_ROOT / "extracted_resources" / "resources"
 HERE = Path(__file__).resolve().parent
-OUT = HERE / "out"
+# 构建产物目录。叫 docs 是因为 GitHub Pages 只认仓库根下的 /docs 作为发布目录，
+# REST API 的 path 只接受 / 与 /docs 两个值。
+OUT = HERE / "docs"
 
 STRINGTABLE = RES / "stringtable.sta"
 ITEMS_XML = RES / "items.xml"
