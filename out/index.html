@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>以撒的结合 · 控制台指令速查</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="bar">
+  <div class="bar-top">
+    <h1>控制台指令速查</h1>
+    <div class="spacer"></div>
+    <a class="ghost-btn" id="creditBtn" href="#credit">引用声明</a>
+  </div>
+
+  <div class="bar-main">
+    <div class="search-wrap">
+      <input id="q" type="search" autocomplete="off" spellcheck="false"
+             placeholder="中文名 / 英文名 / 拼音首字母（bsyc）/ ID（c720）/ 编号（15）">
+      <button id="clearBtn" class="clear" hidden title="清空">×</button>
+    </div>
+    <div class="tabs" id="tabs"></div>
+    <div class="count" id="count">载入中…</div>
+  </div>
+</header>
+
+<main>
+  <div id="grid" class="grid"></div>
+  <p id="empty" class="empty" hidden>没有匹配的条目</p>
+</main>
+
+<section id="credit" class="credit">
+  <h2>引用声明</h2>
+  <dl>
+    <dt>数据来源</dt>
+    <dd>
+      道具 / 饰品 / 卡牌 / 胶囊（ID、官方中文名、英文名、品质、图标）均由构建脚本
+      <code>build.py</code> 从<strong>本机已安装的《以撒的结合：忏悔 / 忏悔+》解包资源</strong>中提取，
+      未抓取任何第三方站点。
+      具体文件：<code>stringtable.sta</code>（官方简体中文本地化）、
+      <code>items.xml</code>、<code>items_metadata.xml</code>、<code>pocketitems.xml</code>、<code>gfx/items/</code>。
+    </dd>
+
+    <dt>掉落物的例外</dt>
+    <dd>
+      <strong>掉落物（红心、硬币、钥匙、宝箱、电池…）无法从本机解包资源反推</strong>，已实测确认：
+      <code>stringtable.sta</code> 只有 <code>THE_BATTERY_NAME</code> 一类的关联道具名，没有按子类型分的掉落物名；
+      <code>entities2.xml</code> 里没有 pickup 变体表。
+      这部分按
+      <a href="https://isaac.huijiwiki.com/wiki/Project:%E8%AF%91%E5%90%8D%E8%A1%A8/%E5%AE%9E%E4%BD%93" target="_blank" rel="noopener">Project:译名表/实体</a>
+      的「5 掉落物」段逐条固化在 <code>build.py</code> 的 <code>PICKUPS</code> 表里，
+      并已按该页原文校对（其中 5.100 / 5.300 / 5.350 三个泛用条目由道具、卡牌、饰品的「实体」按钮覆盖，故未重复列出）。
+    </dd>
+
+    <dt>指令语法</dt>
+    <dd>
+      依据游戏内调试控制台本身，交叉校对
+      <a href="https://isaac.huijiwiki.com/wiki/%E6%8E%A7%E5%88%B6%E5%8F%B0" target="_blank" rel="noopener">灰机wiki《控制台》</a>
+      与 <a href="https://isaac.huijiwiki.com/wiki/Project:%E8%AF%91%E5%90%8D%E8%A1%A8/%E5%AE%9E%E4%BD%93" target="_blank" rel="noopener">Project:译名表/实体</a>。
+    </dd>
+
+    <dt>游戏素材</dt>
+    <dd>
+      《以撒的结合》及站内图标等素材的著作权归原作者
+      <a href="https://www.nicalis.com/" target="_blank" rel="noopener">Nicalis</a> /
+      Edmund McMillen 所有。本站为个人自用的非商业查询工具。
+    </dd>
+
+    <dt>非本站内容</dt>
+    <dd>
+      灰机wiki 的协作内容按
+      <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> 分享。
+    </dd>
+  </dl>
+
+  <h3>指令速记</h3>
+  <ul class="notes">
+    <li>游戏外先把 <code>options.ini</code> 里的 <code>EnableDebugConsole</code> 改成 <code>1</code>；游戏内按 <kbd>`</kbd> 打开控制台。</li>
+    <li><b>道具</b> <code>giveitem c1</code>；<b>饰品</b> <code>giveitem t35</code>；<b>卡牌 / 符文</b> <code>giveitem k31</code>；<b>胶囊</b> <code>giveitem p0</code>。</li>
+    <li>卡牌和胶囊<strong>只能</strong>用 <code>[类型][ID]</code> 形式，不能输英文名。</li>
+    <li>大胶囊用大写 <code>P</code>：<code>giveitem P0</code>，且 <code>P</code> 不能写成小写。</li>
+    <li><b>实体</b>按钮是在房间里生成一件掉落物（<code>spawn</code>），<b>道具</b>按钮是直接给角色（<code>giveitem</code>）。</li>
+    <li><b>掉落物</b>（红心、硬币、钥匙、炸弹、箱子、电池…）只能 <code>spawn 5.xx.y</code> 在地上生成，<strong>没有</strong> <code>giveitem</code> / <code>remove</code>，所以该分类只有一个按钮。</li>
+    <li><code>5.70.x</code> 是胶囊的<strong>纹理</strong>编号，不是效果编号：游戏开局时才随机决定每种纹理对应哪个胶囊效果，所以 <code>spawn 5.70.1</code> 拿到的效果是随机的。要指定效果请用「胶囊 P」的 <code>giveitem p0</code>。</li>
+    <li>剖腹产（C Section）只能写 <code>g c678</code> 或 <code>g C section</code>，写 <code>c section</code> 会被「道具」吃掉。</li>
+    <li>命令对大小写敏感；<code>remove *</code> 清空角色全部道具与饰品。</li>
+  </ul>
+  <p class="build" id="buildInfo"></p>
+</section>
+
+<div id="toast" class="toast" hidden></div>
+
+<script src="app.js"></script>
+</body>
+</html>
