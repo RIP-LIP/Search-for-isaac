@@ -2,7 +2,10 @@
 
 《以撒的结合：忏悔 / 忏悔+》控制台指令速查。搜中文名、英文名、拼音首字母或编号，点一下就复制指令。
 
-线上版：<https://pvk7ilfp3kbd7.space.mcode.cn>
+线上版：
+
+- <https://rip-lip.github.io/Search-for-isaac/> —— GitHub Pages，推 `main` 分支后自动重新发布
+- <https://pvk7ilfp3kbd7.space.mcode.cn> —— 另一处部署，内容手动同步
 
 游戏里按 ` 打开控制台需要先改 `options.ini`，把 `EnableDebugConsole` 设成 `1`。
 
