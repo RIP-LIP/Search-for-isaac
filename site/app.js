@@ -1,5 +1,9 @@
 /* 以撒的结合 · 控制台指令速查 —— 前端 */
 
+// 构建时由 build.py 替换成当次构建的版本号（见 build.py 的 asset_ver）。
+// 静态资源在 CDN 上是长缓存，不带版本号的话浏览器会一直用旧副本。
+const ASSET_VER = '__BUILD_VER__';
+
 const $ = (s) => document.querySelector(s);
 const grid = $('#grid');
 const q = $('#q');
@@ -291,7 +295,7 @@ document.addEventListener('keydown', (e) => {
 
   let data;
   try {
-    data = await (await fetch('data.json')).json();
+    data = await (await fetch(`data.json?v=${ASSET_VER}`)).json();
   } catch (err) {
     countEl.textContent = 'data.json 载入失败';
     grid.innerHTML =

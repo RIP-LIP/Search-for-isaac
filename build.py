@@ -468,6 +468,16 @@ def build() -> tuple[dict, dict]:
 SITE_FILES = ("index.html", "style.css", "app.js")
 
 
+def asset_ver(generated: str) -> str:
+    """把构建时间压成一个短版本号，例如 20261027T211144。
+
+    托管方（mcode 的 CDN、GitHub Pages）给静态资源的是长缓存，
+    浏览器会一直拿旧副本，代码改了线上却没变化。
+    把版本号写进资源 URL，构建一变 URL 就变，浏览器必然重新取。
+    """
+    return generated.replace("-", "").replace(":", "")[:15]
+
+
 def write_site(data: dict, icons: dict[str, dict[int, Path]]) -> None:
     if OUT.exists():
         shutil.rmtree(OUT)
@@ -485,14 +495,28 @@ def write_site(data: dict, icons: dict[str, dict[int, Path]]) -> None:
     (OUT / "data.json").write_text(
         json.dumps(data, ensure_ascii=False, separators=(",", ":")), encoding="utf-8"
     )
+
+    ver = asset_ver(data["meta"]["generated"])
     for name in SITE_FILES:
         p = HERE / "site" / name
-        if p.is_file():
+        if not p.is_file():
+            continue
+        if name == "index.html":
+            html = p.read_text(encoding="utf-8")
+            html = html.replace('href="style.css"', f'href="style.css?v={ver}"')
+            html = html.replace('src="app.js"', f'src="app.js?v={ver}"')
+            (OUT / name).write_text(html, encoding="utf-8")
+        elif name == "app.js":
+            js = p.read_text(encoding="utf-8")
+            js = js.replace("__BUILD_VER__", ver)
+            (OUT / name).write_text(js, encoding="utf-8")
+        else:
             shutil.copyfile(p, OUT / name)
 
     print(f"[ok] 站点 -> {OUT}")
     print(f"     data.json  {len(data['items'])} 条")
     print(f"     icons/     {copied} 个")
+    print(f"     资源版本   {ver}")
 
 
 def main() -> int:
