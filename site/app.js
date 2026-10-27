@@ -120,13 +120,53 @@ const sentinel = document.createElement('div');
 sentinel.className = 'sentinel';
 grid.after(sentinel);
 
-const io = new IntersectionObserver(
-  (entries) => {
-    if (entries.some((e) => e.isIntersecting) && shown < filtered.length) showMore();
-  },
-  { rootMargin: '600px' }
-);
+// 补齐可见区域：一直追加到哨兵被推出视口（或列表到底）为止。
+//
+// 不能只靠 IntersectionObserver 的回调。IO 只在「相交状态变化」时通知：首批渲染完，
+// 哨兵被新增内容往下顶，如果它仍留在扩展视口（视口高 + rootMargin）里，相交状态没变，
+// 事件不会再触发一次 —— 窗口越宽首批越高，越容易卡住。实测宽屏下首批 60 条之后
+// 列表再也不增长，只能靠搜索找到后面的条目。
+function fillViewport() {
+  while (shown < filtered.length) {
+    if (sentinel.getBoundingClientRect().top > window.innerHeight + 600) break;
+    showMore();
+  }
+  updateCount();
+}
+
+// 计数统一在这里写：没加载完就说「已显示 N / M」，加载完才说「匹配数 / 总数」。
+// 之前只有 showMore() 在全部加载完时改一次文本，列表中途加载的状态一律显示成
+// 「匹配数 / 总数」，看上去像是已经列全了，其实后面还有几百条。
+let lastCountText = '';
+function updateCount() {
+  if (!ALL.length) return;
+  const txt =
+    shown >= filtered.length
+      ? `${filtered.length} / ${ALL.length} 条`
+      : `已显示 ${shown} / ${filtered.length} 条`;
+  if (txt !== lastCountText) {
+    countEl.textContent = txt;
+    lastCountText = txt;
+  }
+}
+
+const io = new IntersectionObserver(() => fillViewport(), { rootMargin: '600px' });
 io.observe(sentinel);
+
+// 兜底：滚动时自己判断哨兵位置，不依赖 IO 的状态变化语义
+let ticking = false;
+window.addEventListener(
+  'scroll',
+  () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      ticking = false;
+      fillViewport();
+    });
+  },
+  { passive: true }
+);
 
 function cardHTML(it, n) {
   const thumb = it.icon
@@ -160,7 +200,6 @@ function render() {
   needle = q.value.trim().toLowerCase();
   const total = ALL.length;
   const c = ALL.reduce((a, i) => ((a[i.cat] = (a[i.cat] || 0) + 1), a), {});
-  countEl.textContent = `${filtered.length} / ${total} 条`;
   $('#empty').hidden = filtered.length > 0;
 
   for (const t of CATS) {
@@ -170,7 +209,7 @@ function render() {
 
   shown = 0;
   grid.innerHTML = '';
-  showMore();
+  fillViewport();
 }
 
 function showMore() {
@@ -178,9 +217,6 @@ function showMore() {
   if (!slice.length) return;
   grid.insertAdjacentHTML('beforeend', slice.map((it) => cardHTML(it, needle)).join(''));
   shown += slice.length;
-  if (shown >= filtered.length) {
-    countEl.textContent = `${filtered.length} / ${ALL.length} 条`;
-  }
 }
 
 function flash(el) {

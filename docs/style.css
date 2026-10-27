@@ -42,6 +42,7 @@ body {
   align-items: center;
   gap: 12px;
   margin-bottom: 12px;
+  flex-wrap: wrap;
 }
 
 .bar h1 {
@@ -68,9 +69,18 @@ body {
   display: flex;
   align-items: center;
   gap: 14px;
+  flex-wrap: wrap;
 }
 
-.search-wrap { position: relative; flex: 0 0 420px; }
+/* 搜索框原本固定 420px 宽且不许收缩，窄视口下会把后面的分类标签挤出屏幕
+   （实测 815px 视口时「掉落物 D」被推到 x=911，看不见也点不到）。
+   改成可伸缩：宽度随窗口变，但不超过 420px。 */
+.search-wrap {
+  position: relative;
+  flex: 1 1 240px;
+  min-width: 160px;
+  max-width: 420px;
+}
 
 #q {
   width: 100%;
@@ -100,7 +110,7 @@ body {
 }
 .clear:hover { background: var(--fg-dimmer); color: var(--bg); }
 
-.tabs { display: flex; gap: 6px; }
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; }
 
 .tab {
   padding: 7px 14px;
